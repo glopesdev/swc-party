@@ -29,7 +29,7 @@
       </Expression>
       <Expression xsi:type="Combinator">
         <Combinator xsi:type="q1:UpdateUniform">
-          <q1:UniformName>mvp</q1:UniformName>
+          <q1:UniformName>warp</q1:UniformName>
           <q1:ShaderName>White</q1:ShaderName>
         </Combinator>
       </Expression>
