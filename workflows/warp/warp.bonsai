@@ -1,0 +1,151 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<WorkflowBuilder Version="2.3.0">
+  <Workflow xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:q3="clr-namespace:Bonsai.Scripting;assembly=Bonsai.Scripting" xmlns:q2="clr-namespace:Bonsai.Shaders.Input;assembly=Bonsai.Shaders" xmlns:q1="clr-namespace:Bonsai.Shaders;assembly=Bonsai.Shaders" xmlns="https://horizongir.org/bonsai">
+    <Nodes>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="q1:UpdateFrame" />
+      </Expression>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="q1:WarpPerspective">
+          <q1:Destination>
+            <q1:Point2f>
+              <q1:X>-1</q1:X>
+              <q1:Y>-1</q1:Y>
+            </q1:Point2f>
+            <q1:Point2f>
+              <q1:X>-1</q1:X>
+              <q1:Y>1</q1:Y>
+            </q1:Point2f>
+            <q1:Point2f>
+              <q1:X>1</q1:X>
+              <q1:Y>1</q1:Y>
+            </q1:Point2f>
+            <q1:Point2f>
+              <q1:X>1</q1:X>
+              <q1:Y>-1</q1:Y>
+            </q1:Point2f>
+          </q1:Destination>
+        </Combinator>
+      </Expression>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="q1:UpdateUniform">
+          <q1:UniformName>mvp</q1:UniformName>
+          <q1:ShaderName>White</q1:ShaderName>
+        </Combinator>
+      </Expression>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="q2:MouseMove" />
+      </Expression>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="q2:NormalizedDeviceCoordinates" />
+      </Expression>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="q2:KeyDown" />
+      </Expression>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="CombineLatest" />
+      </Expression>
+      <Expression xsi:type="q3:PythonTransform">
+        <q3:Script>import clr
+clr.AddReference("OpenCV.Net")
+from OpenCV.Net import Point2f
+from System import Array
+
+topleft = Point2f(-1,1)
+bottomleft = Point2f(-1,-1)
+bottomright = Point2f(1,-1)
+topright = Point2f(1,1)
+
+@returns(Array[Point2f])
+def process(value):
+  global topleft,bottomleft,bottomright,topright
+  mouse = Point2f(value.Item1.X,value.Item1.Y)
+  key = value.Item2.EventArgs.ScanCode
+  if key == 110:
+    bottomleft = mouse
+  elif key == 111:
+    topleft = mouse
+  elif key == 112:
+    topright = mouse
+  elif key == 113:
+    bottomright = mouse
+  return Array[Point2f]([bottomleft,topleft,topright,bottomright])</q3:Script>
+      </Expression>
+      <Expression xsi:type="ExternalizedPropertyOfArrayOfPoint2fWarpPerspective">
+        <MemberName>Destination</MemberName>
+        <Name>Destination</Name>
+        <Value>
+          <Point2f>
+            <X>-1</X>
+            <Y>-1</Y>
+          </Point2f>
+          <Point2f>
+            <X>-1</X>
+            <Y>1</Y>
+          </Point2f>
+          <Point2f>
+            <X>1</X>
+            <Y>1</Y>
+          </Point2f>
+          <Point2f>
+            <X>1</X>
+            <Y>-1</Y>
+          </Point2f>
+        </Value>
+      </Expression>
+    </Nodes>
+    <Edges>
+      <Edge>
+        <From>0</From>
+        <To>1</To>
+        <Label>Source1</Label>
+      </Edge>
+      <Edge>
+        <From>1</From>
+        <To>2</To>
+        <Label>Source1</Label>
+      </Edge>
+      <Edge>
+        <From>3</From>
+        <To>4</To>
+        <Label>Source1</Label>
+      </Edge>
+      <Edge>
+        <From>4</From>
+        <To>6</To>
+        <Label>Source1</Label>
+      </Edge>
+      <Edge>
+        <From>5</From>
+        <To>6</To>
+        <Label>Source2</Label>
+      </Edge>
+      <Edge>
+        <From>6</From>
+        <To>7</To>
+        <Label>Source1</Label>
+      </Edge>
+      <Edge>
+        <From>7</From>
+        <To>8</To>
+        <Label>Source1</Label>
+      </Edge>
+      <Edge>
+        <From>8</From>
+        <To>1</To>
+        <Label>Source2</Label>
+      </Edge>
+    </Edges>
+  </Workflow>
+  <ExtensionTypes>
+    <Type>Bonsai.Shaders.UpdateFrame, Bonsai.Shaders, Version=0.16.1.0, Culture=neutral, PublicKeyToken=null</Type>
+    <Type>Bonsai.Shaders.WarpPerspective, Bonsai.Shaders, Version=0.16.1.0, Culture=neutral, PublicKeyToken=null</Type>
+    <Type>Bonsai.Shaders.UpdateUniform, Bonsai.Shaders, Version=0.16.1.0, Culture=neutral, PublicKeyToken=null</Type>
+    <Type>Bonsai.Shaders.Input.MouseMove, Bonsai.Shaders, Version=0.16.1.0, Culture=neutral, PublicKeyToken=null</Type>
+    <Type>Bonsai.Shaders.Input.NormalizedDeviceCoordinates, Bonsai.Shaders, Version=0.16.1.0, Culture=neutral, PublicKeyToken=null</Type>
+    <Type>Bonsai.Shaders.Input.KeyDown, Bonsai.Shaders, Version=0.16.1.0, Culture=neutral, PublicKeyToken=null</Type>
+    <Type>Bonsai.Reactive.CombineLatest, Bonsai.Core, Version=2.3.0.0, Culture=neutral, PublicKeyToken=null</Type>
+    <Type>Bonsai.Scripting.PythonTransform, Bonsai.Scripting, Version=2.3.0.0, Culture=neutral, PublicKeyToken=null</Type>
+    <Type>Bonsai.Expressions.ExternalizedProperty`2[[OpenCV.Net.Point2f[], OpenCV.Net, Version=3.3.0.0, Culture=neutral, PublicKeyToken=null],[Bonsai.Shaders.WarpPerspective, Bonsai.Shaders, Version=0.16.1.0, Culture=neutral, PublicKeyToken=null]], Bonsai.Core, Version=2.3.0.0, Culture=neutral, PublicKeyToken=null</Type>
+  </ExtensionTypes>
+</WorkflowBuilder>
