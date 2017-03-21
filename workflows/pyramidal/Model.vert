@@ -1,4 +1,5 @@
 #version 400
+uniform mat4 warp;
 uniform mat4 modelview;
 uniform mat4 projection;
 uniform sampler2D tex;
@@ -21,7 +22,7 @@ void main()
 {
   mat4 normalmat = transpose(inverse(modelview));
   vec4 v = modelview * rotation* vec4(vp, 1.0);
-  gl_Position = projection * v;
+  gl_Position = (projection * v) * warp;
   position = vec3(v);
   normal = normalize(vec3(normalmat * vec4(vn, 0.0)));
   //double flicker = 0.0;
